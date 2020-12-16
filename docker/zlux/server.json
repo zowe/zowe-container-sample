@@ -1,0 +1,66 @@
+{
+  "node": {
+    "https": {
+      "ipAddresses": [
+        "0.0.0.0"
+      ],
+      "port": 8544,
+      "keys": [
+        "/tls/tls.key"
+      ],
+      "certificates": [
+        "/tls/tls.crt"
+      ],
+      "certificateAuthorities": [
+        "/tls/ca.crt"
+      ]
+    },
+    "mediationLayer": {
+      "server": {
+        "hostname": "localhost",
+        "port": 10011,
+        "gatewayPort": 10012,
+        "isHttps": true
+      },
+      "enabled": false
+    },
+    "headers": {
+      "X-frame-Options": {
+        "override": true,
+        "value": "sameorigin"
+      }
+    }
+  },
+  "productDir": "/app/zlux-core/zlux-app-server/defaults",
+  "dataserviceAuthentication": {
+    "defaultAuthentication": "zss",
+    "rbac": false,
+    "implementationDefaults": {
+      "zss": {
+        "plugins": [
+          "org.zowe.zlux.auth.zss"
+        ]
+      },
+      "fallback": {
+        "plugins": [
+          "org.zowe.zlux.auth.trivial"
+        ]
+      }
+    }
+  },
+  "logLanguage": "en",
+  "agent": {
+    "host": "zss-server.mymainframe.com",
+    "http": {
+      "ipAddresses": [
+        "my.zos.ip.address"
+      ],
+      "port": 8542
+    }
+  },
+  "siteDir": "/root/.zowe/workspace/app-server/site",
+  "instanceDir": "/root/.zowe/workspace/app-server",
+  "groupsDir": "/root/.zowe/workspace/app-server/groups",
+  "usersDir": "/root/.zowe/workspace/app-server/users",
+  "pluginsDir": "/root/.zowe/workspace/app-server/plugins"
+}

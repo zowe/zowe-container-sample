@@ -1,0 +1,59 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+spring.profiles.include: diag
+
+environment:
+    discoveryLocations: https://discovery-service:10011/eureka/
+    dsIpAddress: 0.0.0.0
+    eurekaPassword: password
+    eurekaUserId: eureka
+    gatewayHostname: https://gateway-service:10010
+    hostname: api-catalog-service
+    ipAddress: 0.0.0.0
+    port: 10014
+    preferIpAddress: false
+    truststore: /app/tls/truststore/truststore.p12
+    truststorePassword: password
+    truststoreType: PKCS12
+
+eureka:
+    client:
+        initialInstanceInfoReplicationIntervalSeconds: 5
+        registryFetchIntervalSeconds: 5
+    instance:
+        leaseExpirationDurationInSeconds: 6
+        leaseRenewalIntervalInSeconds: 5
+
+server:
+    ssl:
+        enabled: true
+        keyAlias: catalog
+        keyPassword: password
+        keyStore: /app/tls/keystore/keystore.p12
+        keyStorePassword: password
+        keyStoreType: PKCS12
+
+apiml:
+    service-registry:
+        cacheRefreshInitialDelayInMillis: 10000
+        cacheRefreshRetryDelayInMillis: 10000
+        cacheRefreshUpdateThresholdInMillis: 120000
+        serviceFetchDelayInMillis: 10000
+    banner: console
+    security:
+        ssl:
+            verifySslCertificatesOfServices: true
+
+spring:
+    output:
+        ansi:
+            enabled: always

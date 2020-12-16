@@ -1,0 +1,52 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+spring.profiles.include: diag
+
+apiml:
+    service:
+        hostname: discovery-service
+        ipAddress: 0.0.0.0
+        port: 10011
+    discovery:
+        staticApiDefinitionsDirectories: config/api-defs
+    security:
+        ssl:
+            verifySslCertificatesOfServices: true
+    banner: console
+
+eureka:
+    instance:
+        securePortEnabled: false
+        nonSecurePortEnabled: true
+
+server:
+    ssl:
+        enabled: false
+
+spring:
+    output:
+        ansi:
+            enabled: always
+
+---
+spring.profiles: https
+
+server:
+    ssl:
+        keyAlias: discovery
+        keyPassword: password
+        keyStoreType: PKCS12
+        keyStore: /app/tls/keystore/keystore.p12
+        keyStorePassword: password
+        trustStoreType: PKCS12
+        trustStore: /app/tls/truststore/truststore.p12
+        trustStorePassword: password

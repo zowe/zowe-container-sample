@@ -1,0 +1,64 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: discovery-config-map
+    namespace: {{ .Release.Namespace }}
+    labels:
+        {{- include "zowe-api-ml.labels" . | nindent 8 }}
+data:
+    discovery-service.yml: |
+        spring.profiles.include: diag
+        apiml:
+            service:
+                hostname: discovery-service
+                ipAddress: 0.0.0.0
+                port: {{ .Values.discoveryService.service.port }}
+            discovery:
+                staticApiDefinitionsDirectories: config/local/api-defs
+            security:
+                ssl:
+                    verifySslCertificatesOfServices: true
+            banner: console
+        spring:
+            output:
+                ansi:
+                    enabled: always
+        ---
+        spring.profiles: https
+        server:
+            ssl:
+                keyAlias: ${KEY_ALIAS}
+                keyPassword: ${KEY_PASSWORD}
+                keyStoreType: {{ .Values.discoveryService.ssl.keystore.type }}
+                {{- if .Values.security.useCertManager }} # Keystore configuration
+                {{- if eq .Values.discoveryService.ssl.keystore.type "PKCS12" }}
+                keyStore: /app/tls/keystore/keystore.p12
+                {{- else }}
+                keyStore: /app/tls/keystore/keystore.jks
+                {{- end }}
+                {{- else }}
+                keyStore: /app/tls/keystore/{{ .Values.discoveryService.ssl.keystore.filename }}
+                {{- end }}
+                keyStorePassword: ${KEYSTORE_PASSWORD}
+                trustStoreType: {{ .Values.discoveryService.ssl.truststore.type }}
+                {{- if .Values.security.useCertManager }} # Truststore configuration
+                {{- if eq .Values.discoveryService.ssl.truststore.type "PKCS12" }}
+                trustStore: /app/tls/truststore/truststore.p12
+                {{- else }}
+                trustStore: /app/tls/truststore/truststore.jks
+                {{- end }}
+                {{- else }}
+                trustStore: /app/tls/truststore/{{ .Values.discoveryService.ssl.truststore.filename }}
+                {{- end }}
+                trustStorePassword: ${TRUSTSTORE_PASSWORD}

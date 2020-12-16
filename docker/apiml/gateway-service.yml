@@ -1,0 +1,63 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+spring.profiles.include: diag
+apiml:
+    service:
+        hostname: gateway-service
+        ipAddress: 0.0.0.0
+        port: 10010
+        discoveryServiceUrls: https://discovery-service:10011/eureka/
+    security:
+        auth:
+            provider: zosmf
+            zosmfServiceId: ibmzosmf
+            passTicket:
+                timeout: 360 # [s] - default timeout to expire (z/OS has 10 mins as default)
+        ssl:
+            verifySslCertificatesOfServices: true
+        zosmf:
+            useJwtToken: true # if true and z/OSMF returns JWT token use it, otherwise create Zowe JWT token with LTPA token from z/OSMF, default is true
+        x509:
+            enabled: true
+    banner: console
+
+spring:
+    output:
+        ansi:
+            enabled: always
+    cache:
+        ehcache:
+            config: classpath:ehcache.xml
+
+server:
+    internal:
+        enabled: true
+        port: 10017
+        ssl:
+            keyAlias: gateway
+            keyPassword: password
+            keyStore: /app/tls/keystore/keystore.p12
+            keyStorePassword: password
+            trustStore: /app/tls/truststore/truststore.p12
+            trustStorePassword: password
+            keyStoreType: PKCS12
+            trustStoreType: PKCS12
+            clientAuth: want
+    ssl:
+        keyAlias: gateway
+        keyPassword: password
+        keyStore: /app/tls/keystore/keystore.p12
+        keyStorePassword: password
+        keyStoreType: PKCS12
+        trustStore: /app/tls/truststore/truststore.p12
+        trustStorePassword: password
+        trustStoreType: PKCS12

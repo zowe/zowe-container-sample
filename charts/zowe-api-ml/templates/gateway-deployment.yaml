@@ -1,0 +1,132 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "zowe-api-ml.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  {{- if not .Values.gatewayService.autoscaling.enabled }}
+  replicas: {{ .Values.gatewayService.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "zowe-api-ml.serviceAccountName" . }}
+      containers:
+        - name: gateway
+          image: "{{ .Values.image.repository }}/{{ .Values.gatewayService.image.name }}:{{ .Values.gatewayService.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            [
+              "--spring.config.additional-location=file:/app/config/spring/gateway-service.yml",
+            ]
+          env:
+            {{- if .Values.security.useCertManager }}
+            - name: KEY_ALIAS
+              value: "1"
+            - name: KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.security.certManager.passwordSecretRef.name }}
+                  key: {{ .Values.security.certManager.passwordSecretRef.key }}
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.security.certManager.passwordSecretRef.name }}
+                  key: {{ .Values.security.certManager.passwordSecretRef.key }}
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.security.certManager.passwordSecretRef.name }}
+                  key: {{ .Values.security.certManager.passwordSecretRef.key }}
+            {{- else }}
+            - name: KEY_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gatewayService.ssl.tlsSecret.name }}
+                  key: {{ .Values.gatewayService.ssl.tlsSecret.keyAliasKey }}
+            - name: KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gatewayService.ssl.tlsSecret.name }}
+                  key: {{ .Values.gatewayService.ssl.tlsSecret.keyPasswordKey }}
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gatewayService.ssl.tlsSecret.name }}
+                  key: {{ .Values.gatewayService.ssl.tlsSecret.keystorePasswordKey }}
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gatewayService.ssl.tlsSecret.name }}
+                  key: {{ .Values.gatewayService.ssl.tlsSecret.truststorePasswordKey }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.gatewayService.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /app/config/spring
+              name: gateway-config-volume
+            - mountPath: /app/tls/mounted-keystore
+              name: keystore-secret
+            {{- if .Values.security.trustedCerts }}
+            - mountPath: /app/tls/trusted-certs
+              name: trusted-certs-secret
+            {{- end }}
+            {{- if .Values.security.useCertManager }}
+            - mountPath: /app/tls/jwtsecret
+              name: jwt-secret
+            {{- else }}
+            - mountPath: /app/tls/mounted-truststore
+              name: truststore-secret
+            {{- end }}
+      volumes:
+        - configMap:
+            name: gateway-config-map
+            items:
+              - key: gateway-service.yml
+                path: gateway-service.yml
+          name: gateway-config-volume
+        {{- if .Values.security.trustedCerts }}
+        - name: trusted-certs-secret
+          secret:
+            secretName: trusted-certs-secret
+        {{- end }}
+        {{- if .Values.security.useCertManager }}
+        - name: keystore-secret
+          secret:
+            secretName: gateway-tls
+        - name: jwt-secret
+          secret:
+            secretName: jwt-secret-tls
+        {{- else }}
+        - name: keystore-secret
+          secret:
+            secretName: {{ .Values.gatewayService.ssl.keystore.secretName }}
+        - name: truststore-secret
+          secret:
+            secretName: {{ .Values.gatewayService.ssl.truststore.secretName }}
+        {{- end }}

@@ -1,0 +1,116 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+version: "3"
+services:
+    discovery-service:
+        restart: always
+        hostname: discovery-service
+        build:
+            dockerfile: Dockerfile.discovery
+            context: ./build/apiml/
+        command:
+            [
+                "--spring.config.additional-location=file:/app/discovery-service.yml",
+                "--spring.profiles.active=https",
+            ]
+        ports:
+            - "10011:10011"
+        volumes:
+            - ./docker/apiml/discovery-service.yml:/app/discovery-service.yml
+            - ./certificates/discovery-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+            - ./docker/apiml/api-defs:/app/config/api-defs
+    gateway-service:
+        restart: always
+        hostname: gateway-service
+        build:
+            dockerfile: Dockerfile.gateway
+            context: ./build/apiml/
+        command:
+            [
+                "--spring.config.additional-location=file:/app/gateway-service.yml",
+            ]
+        ports:
+            - "10010:10010"
+        volumes:
+            - ./docker/apiml/gateway-service.yml:/app/gateway-service.yml
+            - ./certificates/gateway-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+    api-catalog-service:
+        restart: always
+        hostname: api-catalog-service
+        build:
+            dockerfile: Dockerfile.catalog
+            context: ./build/apiml/
+        command:
+            [
+                "--spring.config.additional-location=file:/app/api-catalog-service.yml",
+            ]
+        ports:
+            - "10014:10014"
+        volumes:
+            - ./docker/apiml/api-catalog-service.yml:/app/api-catalog-service.yml
+            - ./certificates/api-catalog-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+    zlux-app-server:
+        restart: "no" #always
+        hostname: zlux-app-server
+        build:
+            dockerfile: Dockerfile.zlux
+            context: ./build/zlux
+        ports:
+            - "8544:8544"
+        volumes:
+            # - ./docker/zlux/server.json:/root/.zowe/workspace/app-server/serverConfig/server.json
+            - dropins-volume:/dropins
+            - instance-volume:/root/.zowe
+            - ./certificates/zlux-app-server/tls.key:/tls/tls.key
+            - ./certificates/zlux-app-server/tls.crt:/tls/tls.crt
+            - ./certificates/ca/ca.crt:/tls/ca.crt
+    zss-auth-plugin:
+        restart: "no"
+        hostname: zss-auth-plugin
+        build:
+            dockerfile: Dockerfile.zssauth
+            context: ./build/zlux
+        volumes:
+            - dropins-volume:/dropins
+    zlux-editor-plugin:
+        restart: "no"
+        hostname: zlux-editor-plugin
+        build:
+            dockerfile: Dockerfile.editor
+            context: ./build/zlux
+        volumes:
+            - dropins-volume:/dropins
+    zlux-tn3270-plugin:
+        restart: "no"
+        hostname: zlux-tn3270-plugin
+        build:
+            dockerfile: Dockerfile.tn3270
+            context: ./build/zlux
+        volumes:
+            - dropins-volume:/dropins
+    zlux-vt-plugin:
+        restart: "no"
+        hostname: zlux-vt-plugin
+        build:
+            dockerfile: Dockerfile.vt
+            context: ./build/zlux
+        volumes:
+            - dropins-volume:/dropins
+volumes:
+    dropins-volume:
+    instance-volume:

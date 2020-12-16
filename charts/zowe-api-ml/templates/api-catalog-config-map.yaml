@@ -1,0 +1,79 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: api-catalog-config-map
+    namespace: {{ .Release.Namespace }}
+    labels:
+        {{- include "zowe-api-ml.labels" . | nindent 8 }}
+data:
+    api-catalog-service.yml: |
+        spring.profiles.include: diag
+        environment:
+            discoveryLocations: https://discovery-service:{{ .Values.discoveryService.service.port }}/eureka/
+            dsIpAddress: 0.0.0.0
+            eurekaPassword: password
+            eurekaUserId: eureka
+            gatewayHostname: https://gateway-service:{{ .Values.gatewayService.service.port }}
+            hostname: api-catalog-service
+            ipAddress: 0.0.0.0
+            port: {{ .Values.apiCatalogService.service.port }}
+            preferIpAddress: false
+            {{- if .Values.security.useCertManager }} # Truststore configuration
+            {{- if eq .Values.apiCatalogService.ssl.truststore.type "PKCS12" }}
+            trustStore: /app/tls/truststore/truststore.p12
+            {{- else }}
+            trustStore: /app/tls/truststore/truststore.jks
+            {{- end }}
+            {{- else }}
+            trustStore: /app/tls/truststore/{{ .Values.apiCatalogService.ssl.truststore.filename }}
+            {{- end }}
+            truststorePassword: ${TRUSTSTORE_PASSWORD}
+            truststoreType: {{ .Values.apiCatalogService.ssl.truststore.type }}
+        eureka:
+            client:
+                initialInstanceInfoReplicationIntervalSeconds: 5
+                registryFetchIntervalSeconds: 5
+            instance:
+                leaseExpirationDurationInSeconds: 6
+                leaseRenewalIntervalInSeconds: 5
+        server:
+            ssl:
+                enabled: true
+                keyAlias: ${KEY_ALIAS}
+                keyPassword: ${KEY_PASSWORD}
+                {{- if .Values.security.useCertManager }} # Keystore configuration
+                {{- if eq .Values.apiCatalogService.ssl.keystore.type "PKCS12" }}
+                keyStore: /app/tls/keystore/keystore.p12
+                {{- else }}
+                keyStore: /app/tls/keystore/keystore.jks
+                {{- end }}
+                {{- else }}
+                keyStore: /app/tls/keystore/{{ .Values.apiCatalogService.ssl.keystore.filename }}
+                {{- end }}
+                keyStorePassword: ${KEYSTORE_PASSWORD}
+                keyStoreType: {{ .Values.apiCatalogService.ssl.keystore.type }}
+        apiml:
+            service-registry:
+                cacheRefreshInitialDelayInMillis: 10000
+                cacheRefreshRetryDelayInMillis: 10000
+                cacheRefreshUpdateThresholdInMillis: 120000
+                serviceFetchDelayInMillis: 10000
+            banner: console
+            security:
+                ssl:
+                    verifySslCertificatesOfServices: true
+        spring:
+            output:
+                ansi:
+                    enabled: always

@@ -1,0 +1,58 @@
+{{- if .Values.security.useCertManager }}
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jwt-secret-certificate
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "zowe-api-ml.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+spec:
+  secretName: jwt-secret-tls
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  subject:
+    countries:
+      - UK
+    provinces:
+      - Hampshire
+    localities:
+      - Winchester
+    organizations:
+      - Zowe
+    organizationalUnits:
+      - Development
+  commonName: "Zowe API ML JWT Secret"
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  usages:
+    - digital signature
+    - key encipherment
+    - data encipherment
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef: # Password used to encrypt the keystore
+        key: {{ .Values.security.certManager.passwordSecretRef.key }}
+        name: {{ .Values.security.certManager.passwordSecretRef.name }}
+  issuerRef:
+    name: {{ .Values.security.certManager.issuerRef.name }}
+    kind: {{ .Values.security.certManager.issuerRef.kind }}
+    group: {{ .Values.security.certManager.issuerRef.group }}
+{{- end }}

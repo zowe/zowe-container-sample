@@ -1,0 +1,188 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2020                                                        #
+#                                                                                       #
+#########################################################################################
+
+# Default values for zowe-api-ml.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: ompzowe
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+security:
+  useCertManager: false
+  certManager:
+    passwordSecretRef:
+      key: password
+      name: pkcs12-password-secret
+    issuerRef:
+      name: ca-issuer
+      kind: Issuer
+      group: cert-manager.io
+
+apiCatalogService:
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  image:
+    name: api-catalog-service
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  replicaCount: 1
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  service:
+    port: 10014
+  ssl: # If not using cert-manager
+    tlsSecret:
+      name: catalog-secret
+      keyAliasKey: sslkeyalias
+      keyPasswordKey: sslkeypassword
+      keystorePasswordKey: sslkeystorepassword
+      truststorePasswordKey: ssltruststorepassword
+    keystore:
+      secretName: api-catalog-service-keystore
+      filename: keystore.p12
+      type: PKCS12
+    truststore:
+      secretName: zowe-truststore
+      filename: truststore.p12
+      type: PKCS12
+
+discoveryService:
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  image:
+    name: discovery-service
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  replicaCount: 1
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  service:
+    port: 10011
+  ssl: # If not using cert-manager
+    tlsSecret:
+      name: discovery-secret
+      keyAliasKey: sslkeyalias
+      keyPasswordKey: sslkeypassword
+      keystorePasswordKey: sslkeystorepassword
+      truststorePasswordKey: ssltruststorepassword
+    keystore:
+      secretName: discovery-service-keystore
+      filename: keystore.p12
+      type: PKCS12
+    truststore:
+      secretName: zowe-truststore
+      filename: truststore.p12
+      type: PKCS12
+
+gatewayService:
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  image:
+    name: gateway-service
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  replicaCount: 1
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  service:
+    port: 10010
+  ssl: # If not using cert-manager
+    tlsSecret:
+      name: gateway-secret
+      keyAliasKey: sslkeyalias
+      keyPasswordKey: sslkeypassword
+      keystorePasswordKey: sslkeystorepassword
+      truststorePasswordKey: ssltruststorepassword
+    keystore:
+      secretName: gateway-service-keystore
+      filename: keystore.p12
+      type: PKCS12
+    truststore:
+      secretName: zowe-truststore
+      filename: truststore.p12
+      type: PKCS12
+
+zosmf:
+  instanceBaseUrls:
+    - https://zosmf.mymainframe.com:32070/
+  gatewayUrl: api
+  documentationUrl: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.4.0/com.ibm.zos.v2r4.izua700/IZUHPINFO_RESTServices.htm
+
+### Generated by Helm ###
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "apiml-service-account"
+
+ingress:
+  enabled: false
+  annotations: {}
+  #   kubernetes.io/ingress.class: nginx
+  hosts: []
+  #   - host: chart-example.local
+  #     paths: []
+  #       - path: /
+  #         serviceName: my-service
+  #         servicePort: 80
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts: []
