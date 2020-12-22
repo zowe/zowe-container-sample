@@ -65,6 +65,9 @@ services:
             - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
             - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
     zlux-app-server:
+        environment: 
+            ZWED_agent_host: zss.mymainframe.com
+            ZWED_agent_http_port: 8542
         restart: "no" #always
         hostname: zlux-app-server
         build:

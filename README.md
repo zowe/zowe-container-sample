@@ -4,8 +4,6 @@
 
 This repository stores artifacts relating to the deployment of Zowe on container technologies and cloud platforms.
 
-Please note, the ZLUX App Server (Web Desktop) functionality started when using Docker Compose is currently in development and will not connect to ZSS without manual intervention. This will be documented further soon.
-
 ## Docker Compose (Quickstart)
 
 To start a Zowe environment locally, you can use Docker Compose. This will use the configuration in the `docker-compose.yml` file to start the environment.
@@ -18,14 +16,19 @@ To configure the connection to z/OS, you must specify your z/OSMF endpoint in `d
 
 To do this, open `docker/apiml/api-defs/ibm-zosmf.yml`, and change the value for `services.instanceBaseUrls` to your z/OSMF endpoint.
 
+### Configure zss endpoint
+
+To configure the connection to zss, modify file `docker-compose.yml`.
+In section `zlux-app-server` change values for `environment.ZWED_agent_host` and `environment.ZWED_agent_http_port` to configure zss host and port respectively.
+
 ### Starting Docker Compose environment
 
 Once you have configured the z/OSMF endpoint, and you can issue the following command to start your environment:
-```bash
+```
 docker-compose up
 ```
 
-Once started, you can access the API ML Gateway service at https://localhost:10010/ and the API ML Discovery Service (Eureka dashboard) at https://localhost:10011/
+Once started, you can access the API ML Gateway service at https://localhost:10010/, the API ML Discovery Service (Eureka dashboard) at https://localhost:10011/, and ZOWE Desktop at https://localhost:8544/
 
 ## Kubernetes
 

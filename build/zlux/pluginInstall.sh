@@ -12,13 +12,20 @@
 #                                                                                       #
 #########################################################################################
 
-DROPINS_DIRECTORY="/dropins"
-DIRECTORY_NAME=$DROPINS_DIRECTORY/$(basename "$1" | cut -d. -f1)
-mkdir -p $DIRECTORY_NAME
-tar -xvf $1 -C $DIRECTORY_NAME
-cd $DIRECTORY_NAME
-if test -f "/dropins/bin/install-app.sh"; then
-  if test -f "pluginDefinition.json"; then
-    /dropins/bin/install-app.sh $DIRECTORY_NAME
-  fi
+if [ -d "/dropins" ]; then
+  cd /dropins;
+  for D in */;
+   do
+    cd /dropins
+    plugin_base="$D""opt/zowe/plugins/app-server" 
+    if test -d "$plugin_base"; then
+      cd $plugin_base
+      for P in */;
+       do
+        if test -f "$P/pluginDefinition.json"; then
+          /app/zlux-core/zlux-app-server/bin/install-app.sh $P
+        fi
+      done
+    fi
+  done
 fi
