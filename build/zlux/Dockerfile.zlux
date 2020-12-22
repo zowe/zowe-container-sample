@@ -11,7 +11,18 @@
 #########################################################################################
 FROM node:12
 
+ENV ZWE_REFERRER_HOSTS='localhost'
+ENV ZWED_agent_http_ipAddresses=127.0.0.1
+ENV ZWED_agent_host=zss.mymainframe.com
+ENV ZWED_agent_http_port=8542
+ENV ZWED_dataserviceAuthentication_defaultAuthentication=zss
+ENV ZOWE_ZLUX_TELNET_PORT=23
+ENV ZOWE_ZLUX_SECURITY_TYPE=telnet
+
 ADD files/zlux-core-1.17.0.tar /app/zlux-core
+ADD pluginInstall.sh /app/zlux-core/zlux-app-server/bin
+
 WORKDIR /app/zlux-core/zlux-app-server/bin
+RUN mkdir -p /dropins/bin && cp /app/zlux-core/zlux-app-server/bin/install-app.sh /dropins/bin && ./pluginInstall.sh
 
 CMD [ "./app-server.sh" ]
