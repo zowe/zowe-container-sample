@@ -70,11 +70,6 @@ services:
             ZWED_agent_http_port: 8542
         restart: "no" #always
         hostname: zlux-app-server
-        depends_on: 
-          - zss-auth-plugin
-          - zlux-editor-plugin
-          - zlux-tn3270-plugin
-          - zlux-vt-plugin
         build:
             dockerfile: Dockerfile.zlux
             context: ./build/zlux
