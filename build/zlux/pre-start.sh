@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #########################################################################################
 #                                                                                       #
 # This program and the accompanying materials are made available under the terms of the #
@@ -6,21 +8,22 @@
 #                                                                                       #
 # SPDX-License-Identifier: EPL-2.0                                                      #
 #                                                                                       #
-# Copyright IBM Corporation 2020, 2021                                                  #
+# Copyright IBM Corporation 2021                                                        #
 #                                                                                       #
 #########################################################################################
-FROM node:12
 
-ENV ZWE_REFERRER_HOSTS='localhost'
-ENV ZWED_agent_http_ipAddresses=127.0.0.1
-ENV ZWED_agent_host=zss.mymainframe.com
-ENV ZWED_agent_http_port=8542
-ENV ZWED_dataserviceAuthentication_defaultAuthentication=zss
-ENV ZOWE_ZLUX_TELNET_PORT=23
-ENV ZOWE_ZLUX_SECURITY_TYPE=telnet
+echo "Waiting for 10 seconds before installing plugins in /dropins"
+echo "This will allow for all plugins to be extracted."
+sleep 10
 
-ADD files/zlux-core-1.17.0.tar /app/zlux-core
-COPY pre-start.sh /app/zlux-core/zlux-app-server/bin/pre-start.sh
-WORKDIR /app/zlux-core/zlux-app-server/bin
+echo "Installing all plugins in /dropins"
+for plugin in /dropins/*; do
+  if [ -d "$plugin" ] ;
+  then
+    echo "Installing $plugin"
+    ./install-app.sh $plugin
+  fi
+done
 
-CMD [ "./pre-start.sh" ]
+echo "Executing app-server.sh and transferring PID1 to that processes"
+exec ./app-server.sh
