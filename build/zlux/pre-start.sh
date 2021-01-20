@@ -12,13 +12,18 @@
 #                                                                                       #
 #########################################################################################
 
+echo "Waiting for 10 seconds before installing plugins in /dropins"
+echo "This will allow for all plugins to be extracted."
 sleep 10
 
+echo "Installing all plugins in /dropins"
 for plugin in /dropins/*; do
   if [ -d "$plugin" ] ;
   then
+    echo "Installing $plugin"
     ./install-app.sh $plugin
   fi
 done
 
+echo "Executing app-server.sh and transferring PID1 to that processes"
 exec ./app-server.sh
