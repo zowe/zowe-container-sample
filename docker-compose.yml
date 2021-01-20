@@ -6,7 +6,7 @@
 #                                                                                       #
 # SPDX-License-Identifier: EPL-2.0                                                      #
 #                                                                                       #
-# Copyright IBM Corporation 2020                                                        #
+# Copyright IBM Corporation 2020, 2021                                                  #
 #                                                                                       #
 #########################################################################################
 version: "3"
@@ -65,9 +65,13 @@ services:
             - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
             - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
     zlux-app-server:
-        environment: 
+        environment:
             ZWED_agent_host: zss.mymainframe.com
+            ZWED_agent_http_ipAddresses: "1.2.3.4"
             ZWED_agent_http_port: 8542
+            ZWED_node_https_keys: "/tls/tls.key,"
+            ZWED_node_https_certificates: "/tls/tls.crt,"
+            ZWED_node_https_certificateAuthorities: "/tls/ca.crt,"
         restart: "no" #always
         hostname: zlux-app-server
         build:
@@ -76,7 +80,6 @@ services:
         ports:
             - "8544:8544"
         volumes:
-            # - ./docker/zlux/server.json:/root/.zowe/workspace/app-server/serverConfig/server.json
             - dropins-volume:/dropins
             - instance-volume:/root/.zowe
             - ./certificates/zlux-app-server/tls.key:/tls/tls.key
