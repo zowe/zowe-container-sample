@@ -20,28 +20,46 @@
 #                                                                                       #
 #########################################################################################
 services:
-  - serviceId: ibmzosmf
-    title: IBM z/OSMF
-    description: IBM z/OS Management Facility REST API service
-    catalogUiTileId: zosmf
-    instanceBaseUrls:
-      - https://zosmf.mymainframe.com:32070/ # scheme://hostname:port/contextPath
-    homePageRelativeUrl: # Home page of the z/OSMF service
-    routes:
-      - gatewayUrl: api
-        serviceRelativeUrl: /
-      - gatewayUrl: ui
-        serviceRelativeUrl: /
-    authentication:
-      scheme: zosmf
-    apiInfo:
-      - apiId: com.ibm.zosmf
-        gatewayUrl: api
-        version: 2.4.0
-        documentationUrl: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.izua700/IZUHPINFO_RESTServices.htm
-        swaggerUrl:
+    - serviceId: zosmf
+      title: z/OSMF
+      description: IBM z/OS Management Facility REST API service
+      instanceBaseUrls:
+        - https://TVT5003.svl.ibm.com:00443/zosmf/
+      homePageRelativeUrl:  # Home page is at the same URL
+      routedServices:
+        - gatewayUrl: api/v1
+          serviceRelativeUrl:
+      authentication:
+          scheme: zosmf
+      apiInfo:
+        - apiId: ibm.zosmf
+          gatewayUrl: api/v1
+          documentationUrl: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.4.0/com.ibm.zos.v2r4.izua700/IZUHPINFO_RESTServices.htm
+      customMetadata:
+          apiml:
+              enableUrlEncodedCharacters: true
 
+    - serviceId: ibmzosmf
+      title: IBM z/OSMF
+      description: 'IBM z/OS Management Facility REST API service. Once configured you can access z/OSMF via the API gateway: https://TVT5003.svl.ibm.com:47554/api/v1/ibmzosmf/zosmf/info'
+      catalogUiTileId: zosmf
+      instanceBaseUrls:
+        - https://TVT5003.svl.ibm.com:00443/
+      homePageRelativeUrl:  # Home page is at the same URL
+      routedServices:
+        - gatewayUrl: api/v1
+          serviceRelativeUrl:
+      authentication:
+          scheme: zosmf
+      apiInfo:
+        - apiId: ibm.zosmf
+          gatewayUrl: api/v1
+          documentationUrl: https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.4.0/com.ibm.zos.v2r4.izua700/IZUHPINFO_RESTServices.htm
+          swaggerUrl: https://TVT5003.svl.ibm.com:00443/zosmf/api/docs
+      customMetadata:
+          apiml:
+              enableUrlEncodedCharacters: true
 catalogUiTiles:
-  zosmf:
-    title: z/OSMF services
-    description: IBM z/OS Management Facility REST services
+    zosmf:
+        title: z/OSMF services
+        description: IBM z/OS Management Facility REST services

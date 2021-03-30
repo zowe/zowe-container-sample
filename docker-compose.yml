@@ -64,11 +64,45 @@ services:
             - ./certificates/api-catalog-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
             - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
             - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+    datasets-api-service:
+        restart: always
+        hostname: datasets-api-service
+        build:
+            dockerfile: Dockerfile.datasets
+            context: ./build/explorers/
+        command:
+            [
+                "--spring.config.additional-location=file:/app/datasets-api-service.yml",
+            ]
+        ports:
+            - "18547:18547"
+        volumes:
+            - ./docker/explorers/datasets-api-service.yml:/app/datasets-api-service.yml
+            - ./certificates/datasets-api-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+    jobs-api-service:
+        restart: always
+        hostname: jobs-api-service
+        build:
+            dockerfile: Dockerfile.jobs
+            context: ./build/explorers/
+        command:
+            [
+                "--spring.config.additional-location=file:/app/jobs-api-service.yml",
+            ]
+        ports:
+            - "18545:18545"
+        volumes:
+            - ./docker/explorers/jobs-api-service.yml:/app/jobs-api-service.yml
+            - ./certificates/jobs-api-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt        
     zlux-app-server:
         environment:
-            ZWED_agent_host: zss.mymainframe.com
+            ZWED_agent_host: tvt5003.svl.ibm.com
             ZWED_agent_http_ipAddresses: "1.2.3.4"
-            ZWED_agent_http_port: 8542
+            ZWED_agent_http_port: 48542
             ZWED_node_https_keys: "/tls/tls.key,"
             ZWED_node_https_certificates: "/tls/tls.crt,"
             ZWED_node_https_certificateAuthorities: "/tls/ca.crt,"

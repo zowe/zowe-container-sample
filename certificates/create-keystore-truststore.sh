@@ -31,6 +31,8 @@ echo "Removing all current working directories, keys, certs, keystores and trust
 rm -rf api-catalog-service
 rm -rf discovery-service
 rm -rf gateway-service
+rm -rf datasets-api-service
+rm -rf jobs-api-service
 rm -rf jwt-secret
 rm -rf zlux-app-server
 rm -f truststore.p12
@@ -46,6 +48,8 @@ echo "Creating working directories"
 mkdir api-catalog-service
 mkdir discovery-service
 mkdir gateway-service
+mkdir datasets-api-service
+mkdir jobs-api-service
 mkdir jwt-secret
 mkdir zlux-app-server
 
@@ -70,6 +74,20 @@ openssl x509 -req -in ./gateway-service/gateway-service.csr -CA ./ca/ca.crt -CAk
 openssl pkcs12 -export -out ./gateway-service/keystore.p12 -inkey ./gateway-service/tls.key -in ./gateway-service/tls.crt -name gateway -password pass:$PASSWORD
 cp ./ca/ca.crt ./gateway-service/ca.crt
 
+echo "Creating Datasets API Service Keystore"
+openssl genrsa -out ./datasets-api-service/tls.key 2048
+openssl req -new -subj "$SUBJECT/CN=Zowe Datasets API Service" -key ./datasets-api-service/tls.key -out ./datasets-api-service/datasets-api-service.csr
+openssl x509 -req -in ./datasets-api-service/datasets-api-service.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./datasets-api-service/tls.crt -days 825 -sha256 -extfile ./config/datasets-api-service.ext
+openssl pkcs12 -export -out ./datasets-api-service/keystore.p12 -inkey ./datasets-api-service/tls.key -in ./datasets-api-service/tls.crt -name datasets-api -password pass:$PASSWORD
+cp ./ca/ca.crt ./datasets-api-service/ca.crt
+
+echo "Creating Jobs API Service Keystore"
+openssl genrsa -out ./jobs-api-service/tls.key 2048
+openssl req -new -subj "$SUBJECT/CN=Zowe Jobs API Service" -key ./jobs-api-service/tls.key -out ./jobs-api-service/jobs-api-service.csr
+openssl x509 -req -in ./jobs-api-service/jobs-api-service.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./jobs-api-service/tls.crt -days 825 -sha256 -extfile ./config/jobs-api-service.ext
+openssl pkcs12 -export -out ./jobs-api-service/keystore.p12 -inkey ./jobs-api-service/tls.key -in ./jobs-api-service/tls.crt -name jobs-api -password pass:$PASSWORD
+cp ./ca/ca.crt ./jobs-api-service/ca.crt
+
 echo "Creating JWT secret"
 openssl genrsa -out ./jwt-secret/tls.key 2048
 openssl req -new -subj "$SUBJECT/CN=Zowe API ML JWT Secret" -key ./jwt-secret/tls.key -out ./jwt-secret/jwt-secret.csr
@@ -93,7 +111,7 @@ echo "Loading additional trusted certs"
 for filename in ./trusted-certs/*; do
   BEGINCERT="-----BEGIN CERTIFICATE-----"
   FILECONTENTS=$(head -1 $filename)
-  if  [[ $FILECONTENTS == $BEGINCERT ]] ;
+  if  [[ $FILECONTENTS == $BEGINCERT* ]] ;
   then
     echo "$filename is a cert! Importing into truststore"
     keytool -import -alias $(basename "$filename" | cut -d. -f1) -file $filename -keystore truststore.p12 -storepass $PASSWORD -storetype PKCS12 -noprompt

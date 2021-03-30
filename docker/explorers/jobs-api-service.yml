@@ -1,0 +1,33 @@
+#########################################################################################
+#                                                                                       #
+# This program and the accompanying materials are made available under the terms of the #
+# Eclipse Public License v2.0 which accompanies this distribution, and is available at  #
+# https://www.eclipse.org/legal/epl-v20.html                                            #
+#                                                                                       #
+# SPDX-License-Identifier: EPL-2.0                                                      #
+#                                                                                       #
+# Copyright IBM Corporation 2021                                                        #
+#                                                                                       #
+#########################################################################################
+ibm.serversocket.recover: true
+file.encoding: UTF-8
+java.protocol.handler.pkgs: com.ibm.crypto.provider
+com.ibm.jsse2.overrideDefaultTLS: true
+spring.main.banner-mode: "off"
+java.io.tmpdir: /tmp
+server:
+  port: 18545
+  connection-timeout: 8000
+  compression.enabled: true
+  ssl:
+    keyAlias: jobs-api
+    keyPassword: password
+    keyStore: /app/tls/keystore/keystore.p12
+    keyStorePassword: password
+    keyStoreType: PKCS12
+    trustStore: /app/tls/truststore/truststore.p12
+    trustStorePassword: password
+    trustStoreType: PKCS12
+connection:
+  httpsPort: 10010
+  ipAddress: gateway-service
