@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #########################################################################################
 #                                                                                       #
 # This program and the accompanying materials are made available under the terms of the #
@@ -6,22 +8,12 @@
 #                                                                                       #
 # SPDX-License-Identifier: EPL-2.0                                                      #
 #                                                                                       #
-# Copyright IBM Corporation 2020, 2021                                                  #
+# Copyright IBM Corporation 2020                                                        #
 #                                                                                       #
 #########################################################################################
-FROM node:12
-
-ENV ZWED_agent_host=zss.mymainframe.com
-ENV ZWED_agent_https_port=8542
-ENV ZOWE_ZLUX_TELNET_PORT=23
-ENV ZOWE_ZLUX_SECURITY_TYPE=telnet
-ENV ZWE_EXTERNAL_HOST='localhost'
-ENV ZWED_node_allowInvalidTLSProxy=true
-ENV ZWE_REFERRER_HOSTS='localhost,gateway-service,zlux-app-server'
-
-
-ADD files/zlux-core-1.21.0.tar /app/zlux-core
-COPY pre-start.sh /app/zlux-core/zlux-app-server/bin/pre-start.sh
-WORKDIR /app/zlux-core/zlux-app-server/bin
-
-CMD [ "./pre-start.sh" ]
+APP_TARS_PATH="./files/plugins"
+APPS_DECOMPRESS_PATH='./apps'
+for file in $APP_TARS_PATH/*; do
+  DIRECTORY_NAME=$(basename "$file" | cut -d. -f1)
+  tar -xvf $file -C $DIRECTORY_NAME
+done

@@ -11,8 +11,8 @@
 #########################################################################################
 FROM busybox:latest
 
-COPY files/tn3270-ng2-1.17.0.tar /app/tn3270-ng2-1.17.0.tar
+COPY files/plugins/tn3270-ng2-1.21.0.tar /app/tn3270-ng2-1.21.0.tar
 COPY pluginExtractor.sh /bin/pluginExtractor.sh
 WORKDIR /bin
 
-CMD [ "./pluginExtractor.sh", "/app/tn3270-ng2-1.17.0.tar" ]
+CMD [ "./pluginExtractor.sh", "/app/tn3270-ng2-1.21.0.tar" ]

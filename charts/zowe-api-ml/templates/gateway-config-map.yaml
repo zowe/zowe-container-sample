@@ -28,7 +28,7 @@ data:
             security:
                 auth:
                     provider: zosmf
-                    zosmfServiceId: ibmzosmf
+                    zosmfServiceId: zosmf
                     passTicket:
                         timeout: 360
                 ssl:

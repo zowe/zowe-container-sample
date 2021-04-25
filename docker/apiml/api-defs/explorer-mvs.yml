@@ -1,0 +1,11 @@
+services:
+- serviceId: explorer-mvs
+  title: MVS Explorer
+  description: IBM z/OS Datasets UI service
+  catalogUiTileId:
+  instanceBaseUrls:
+  - https://explorer-mvs:18548/
+  homePageRelativeUrl:
+  routedServices:
+  - gatewayUrl: ui/v1
+    serviceRelativeUrl: /ui/v1/explorer-mvs

@@ -11,7 +11,7 @@
 #########################################################################################
 FROM ibmjava:8-sfj
 COPY jars/jobs-api-service.jar /app/app.jar
-COPY start.sh /app/start.sh
+COPY start-api.sh /app/start.sh
 RUN mkdir -p /app/tls && chmod 777 /app && chmod 777 /app/tls
 WORKDIR /app
 

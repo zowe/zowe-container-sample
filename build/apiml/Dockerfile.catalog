@@ -13,7 +13,8 @@ FROM ibmjava:8-sfj
 
 COPY jars/api-catalog-services.jar /app/app.jar
 COPY start.sh /app/start.sh
+COPY files/api-catalog /app/api-catalog
 RUN mkdir -p /app/tls && chmod 777 /app && chmod 777 /app/tls
 WORKDIR /app
 
-ENTRYPOINT [ "/app/start.sh" ]
+ENTRYPOINT [ "/app/start.sh" , "org.zowe.api.catalog.json" ]

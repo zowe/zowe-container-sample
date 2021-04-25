@@ -33,6 +33,7 @@ rm -rf discovery-service
 rm -rf gateway-service
 rm -rf datasets-api-service
 rm -rf jobs-api-service
+rm -rf explorer-ui-server
 rm -rf jwt-secret
 rm -rf zlux-app-server
 rm -f truststore.p12
@@ -50,6 +51,7 @@ mkdir discovery-service
 mkdir gateway-service
 mkdir datasets-api-service
 mkdir jobs-api-service
+mkdir explorer-ui-server
 mkdir jwt-secret
 mkdir zlux-app-server
 
@@ -87,6 +89,13 @@ openssl req -new -subj "$SUBJECT/CN=Zowe Jobs API Service" -key ./jobs-api-servi
 openssl x509 -req -in ./jobs-api-service/jobs-api-service.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./jobs-api-service/tls.crt -days 825 -sha256 -extfile ./config/jobs-api-service.ext
 openssl pkcs12 -export -out ./jobs-api-service/keystore.p12 -inkey ./jobs-api-service/tls.key -in ./jobs-api-service/tls.crt -name jobs-api -password pass:$PASSWORD
 cp ./ca/ca.crt ./jobs-api-service/ca.crt
+
+echo "Creating Explorer UI Server Keystore"
+openssl genrsa -out ./explorer-ui-server/tls.key 2048
+openssl req -new -subj "$SUBJECT/CN=Zowe Explorer UI Server" -key ./explorer-ui-server/tls.key -out ./explorer-ui-server/explorer-ui-server.csr
+openssl x509 -req -in ./explorer-ui-server/explorer-ui-server.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./explorer-ui-server/tls.crt -days 825 -sha256 -extfile ./config/explorer-ui-server.ext
+openssl pkcs12 -export -out ./explorer-ui-server/keystore.p12 -inkey ./explorer-ui-server/tls.key -in ./explorer-ui-server/tls.crt -name jobs-api -password pass:$PASSWORD
+cp ./ca/ca.crt ./explorer-ui-server/ca.crt
 
 echo "Creating JWT secret"
 openssl genrsa -out ./jwt-secret/tls.key 2048

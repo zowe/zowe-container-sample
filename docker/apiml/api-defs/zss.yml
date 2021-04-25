@@ -14,7 +14,7 @@ services:
       - apiId: org.zowe.zss
         gatewayUrl: api/v1
         version: 1.20.0
-        # swaggerUrl: TODO
+        swaggerUrl: https://zlux-app-server:8544/api-docs/agent
         # documentationUrl: TODO
 catalogUiTiles:
   zss:

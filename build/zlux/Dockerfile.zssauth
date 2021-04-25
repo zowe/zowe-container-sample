@@ -11,8 +11,8 @@
 #########################################################################################
 FROM busybox:latest
 
-COPY files/zss-auth-1.17.0.tar /app/zss-auth-1.17.0.tar
+COPY files/plugins/zss-auth-1.21.0.tar /app/zss-auth-1.21.0.tar
 COPY pluginExtractor.sh /bin/pluginExtractor.sh
 WORKDIR /bin
 
-CMD [ "./pluginExtractor.sh", "/app/zss-auth-1.17.0.tar" ]
+CMD [ "./pluginExtractor.sh", "/app/zss-auth-1.21.0.tar" ]

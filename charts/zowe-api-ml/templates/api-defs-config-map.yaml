@@ -17,7 +17,7 @@ metadata:
 data:
   ibm-zosmf.yml: |
     services:
-      - serviceId: ibmzosmf
+      - serviceId: zosmf
         title: IBM z/OSMF
         description: IBM z/OS Management Facility REST API service
         catalogUiTileId: zosmf

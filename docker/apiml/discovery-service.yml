@@ -20,7 +20,7 @@ apiml:
         staticApiDefinitionsDirectories: config/api-defs
     security:
         ssl:
-            verifySslCertificatesOfServices: true
+            verifySslCertificatesOfServices: false
     banner: console
 
 eureka:
