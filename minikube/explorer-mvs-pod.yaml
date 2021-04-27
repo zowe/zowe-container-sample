@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: explorer-mvs
+  name: explorer-mvs
+spec:
+  containers:
+  - env:
+    - name: EXPLORER_UI_PORT
+      value: "18548"
+    - name: KEYSTORE_CERTIFICATE
+      value: /app/tls/tls.crt
+    - name: KEYSTORE_KEY
+      value: /app/tls/tls.key
+    - name: ZOWE_EXPLORER_FRAME_ANCESTORS
+      value: localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*
+    image: explorer-mvs
+    imagePullPolicy: "IfNotPresent"
+    name: explorer-mvs
+    ports:
+    - containerPort: 18548
+    volumeMounts:
+    - name: dropins-volume
+      mountPath: /dropins
+    - name: mounted-keystore
+      mountPath: /app/tls/tls.key
+    - name: mounted-certificate
+      mountPath: /app/tls/tls.crt
+    resources: {}
+  hostname: explorer-mvs
+  restartPolicy: Never
+  volumes:
+  - name: dropins-volume
+    persistentVolumeClaim:
+      claimName: dropins-volume
+  - name: mounted-keystore
+    hostPath: 
+      path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/explorer-ui-server/tls.key"
+      type: File
+  - name: mounted-certificate
+    hostPath: 
+      path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/explorer-ui-server/tls.crt"
+      type: File
+status: {}

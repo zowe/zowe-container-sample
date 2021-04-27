@@ -17,6 +17,7 @@ services:
         build:
             dockerfile: Dockerfile.discovery
             context: ./build/apiml/
+        image: discovery-service
         command:
             [
                 "--spring.config.additional-location=file:/app/discovery-service.yml",
@@ -36,6 +37,7 @@ services:
         build:
             dockerfile: Dockerfile.gateway
             context: ./build/apiml/
+        image: gateway-service
         command:
             [
                 "--spring.config.additional-location=file:/app/gateway-service.yml",
@@ -53,6 +55,7 @@ services:
         build:
             dockerfile: Dockerfile.catalog
             context: ./build/apiml/
+        image: api-catalog-service
         command:
             [
                 "--spring.config.additional-location=file:/app/api-catalog-service.yml",
@@ -71,6 +74,7 @@ services:
         build:
             dockerfile: Dockerfile.datasets
             context: ./build/explorers/
+        image: datasets-api-service
         command:
             [
                 "--spring.config.additional-location=file:/app/datasets-api-service.yml",
@@ -88,6 +92,7 @@ services:
         build:
             dockerfile: Dockerfile.jobs
             context: ./build/explorers/
+        image: jobs-api-service
         command:
             [
                 "--spring.config.additional-location=file:/app/jobs-api-service.yml",
@@ -119,6 +124,7 @@ services:
         build:
             dockerfile: Dockerfile.zlux
             context: ./build/zlux
+        image: zlux-app-server
         ports:
             - "8544:8544"
         volumes:
@@ -133,6 +139,7 @@ services:
         build:
             dockerfile: Dockerfile.zssauth
             context: ./build/zlux
+        image: zss-auth-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-editor-plugin:
@@ -141,6 +148,7 @@ services:
         build:
             dockerfile: Dockerfile.editor
             context: ./build/zlux
+        image: zlux-editor-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-tn3270-plugin:
@@ -149,6 +157,7 @@ services:
         build:
             dockerfile: Dockerfile.tn3270
             context: ./build/zlux
+        image: zlux-tn3270-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-vt-plugin:
@@ -157,6 +166,7 @@ services:
         build:
             dockerfile: Dockerfile.vt
             context: ./build/zlux
+        image: zlux-vt-plugin
         volumes:
             - dropins-volume:/dropins
     explorer-jes:
@@ -170,6 +180,7 @@ services:
         build:
             dockerfile: Dockerfile.explorer-jes
             context: ./build/explorers/
+        image: explorer-jes
         ports:
             - "18546:18546"
         volumes:
@@ -187,6 +198,7 @@ services:
         build:
             dockerfile: Dockerfile.explorer-mvs
             context: ./build/explorers/
+        image: explorer-mvs
         ports:
             - "18548:18548"
         volumes:
@@ -204,6 +216,7 @@ services:
         build:
             dockerfile: Dockerfile.explorer-uss
             context: ./build/explorers/
+        image: explorer-uss
         ports:
             - "18550:18550"
         volumes:

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\sdk\kube\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-catalog-service
+  name: api-catalog-service
+spec:
+  ports:
+  - name: "10014"
+    port: 10014
+    targetPort: 10014
+  selector:
+    io.kompose.service: api-catalog-service
+status:
+  loadBalancer: {}

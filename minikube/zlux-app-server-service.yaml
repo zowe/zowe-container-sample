@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\sdk\kube\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zlux-app-server
+  name: zlux-app-server
+spec:
+  ports:
+  - name: "8544"
+    port: 8544
+    targetPort: 8544
+  selector:
+    io.kompose.service: zlux-app-server
+status:
+  loadBalancer: {}

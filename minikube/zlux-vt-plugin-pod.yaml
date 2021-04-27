@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zlux-vt-plugin
+  name: zlux-vt-plugin
+spec:
+  containers:
+  - image: zlux-vt-plugin
+    imagePullPolicy: "IfNotPresent"
+    name: zlux-vt-plugin
+    resources: {}
+    volumeMounts:
+    - mountPath: /dropins
+      name: dropins-volume
+  hostname: zlux-vt-plugin
+  restartPolicy: Never
+  volumes:
+  - name: dropins-volume
+    persistentVolumeClaim:
+      claimName: dropins-volume
+status: {}

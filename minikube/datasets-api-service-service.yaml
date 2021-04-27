@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\sdk\kube\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: datasets-api-service
+  name: datasets-api-service
+spec:
+  ports:
+  - name: "18547"
+    port: 18547
+    targetPort: 18547
+  selector:
+    io.kompose.service: datasets-api-service
+status:
+  loadBalancer: {}

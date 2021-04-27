@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zlux-app-server
+  name: zlux-app-server
+spec:
+  containers:
+  - env:
+    - name: ZLUX_NO_CLUSTER
+      value: "1"
+    - name: ZWED_agent_host
+      value: tvt5003.svl.ibm.com
+    - name: ZWED_agent_https_ipAddresses
+      value: 1.2.3.4
+    - name: ZWED_agent_https_port
+      value: "48542"
+    - name: ZWED_dataserviceAuthentication_defaultAuthentication
+      value: zss
+    - name: ZWED_node_https_certificateAuthorities
+      value: /tls/ca.crt,
+    - name: ZWED_node_https_certificates
+      value: /tls/tls.crt,
+    - name: ZWED_node_https_keys
+      value: /tls/tls.key,
+    - name: ZWED_node_mediationLayer_enabled
+      value: "true"
+    - name: ZWED_node_mediationLayer_server_gatewayHost
+      value: gateway-service
+    - name: ZWED_node_mediationLayer_server_gatewayPort
+      value: "10010"
+    - name: ZWED_node_mediationLayer_server_hostname
+      value: discovery-service
+    - name: ZWED_node_mediationLayer_server_port
+      value: "10011"
+    image: zlux-app-server
+    imagePullPolicy: "IfNotPresent"
+    name: zlux-app-server
+    ports:
+    - containerPort: 8544
+    volumeMounts:
+    - name: mounted-keystore
+      mountPath: /tls/tls.key
+    - name: mounted-truststore
+      mountPath: /tls/ca.crt
+    - name: mounted-certificate
+      mountPath: /tls/tls.crt
+    - name: dropins-volume
+      mountPath: /dropins
+    resources: {}
+  hostname: zlux-app-server
+  restartPolicy: Never
+  volumes:
+    - name: mounted-keystore
+      hostPath: 
+        path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/zlux-app-server/tls.key"
+        type: File
+    - name: mounted-truststore
+      hostPath: 
+        path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/ca/ca.crt"
+        type: File
+    - name: mounted-certificate
+      hostPath: 
+        path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/zlux-app-server/tls.crt"
+        type: File
+    - name: dropins-volume
+      persistentVolumeClaim:
+        claimName: dropins-volume
+status: {}
