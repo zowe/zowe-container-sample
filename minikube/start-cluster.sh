@@ -1,3 +1,7 @@
+kubectl create namespace zowe
+kubectl get namespaces --show-labels
+kubectl config set-context --current --namespace=zowe
+
 kubectl apply -f dropins-volume-persistentvolumeclaim.yaml
 
 kubectl apply -f discovery-service-deployment.yaml,gateway-service-deployment.yaml,api-catalog-service-deployment.yaml
@@ -15,3 +19,7 @@ kubectl apply -f zlux-app-server-deployment.yaml
 kubectl apply -f zlux-app-server-service.yaml
 
 kubectl expose deployment/gateway-service --type=NodePort --name=gateway-nodeport-service
+
+kubectl get pods,svc,deployment,pvc
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/do/deploy.yaml
+# kubectl apply -f zowe-ingress.yaml 

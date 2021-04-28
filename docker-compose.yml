@@ -119,7 +119,7 @@ services:
             ZWED_node_mediationLayer_server_port: 10011
             ZWED_node_mediationLayer_server_hostname: "discovery-service"
             ZLUX_NO_CLUSTER: 1
-        restart: "no" #always
+        restart: always
         hostname: zlux-app-server
         build:
             dockerfile: Dockerfile.zlux
@@ -175,7 +175,7 @@ services:
             KEYSTORE_KEY: "/app/tls/tls.key"
             KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
             ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
-        restart: "no" #always
+        restart: always
         hostname: explorer-jes
         build:
             dockerfile: Dockerfile.explorer-jes
@@ -193,7 +193,7 @@ services:
             KEYSTORE_KEY: "/app/tls/tls.key"
             KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
             ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
-        restart: "no" #always
+        restart: always
         hostname: explorer-mvs
         build:
             dockerfile: Dockerfile.explorer-mvs
@@ -211,7 +211,7 @@ services:
             KEYSTORE_KEY: "/app/tls/tls.key"
             KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
             ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
-        restart: "no" #always
+        restart: always
         hostname: explorer-uss
         build:
             dockerfile: Dockerfile.explorer-uss
