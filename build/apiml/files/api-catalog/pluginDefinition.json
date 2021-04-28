@@ -5,7 +5,7 @@
   "pluginType": "application",
   "webContent": {
     "framework": "iframe",
-    "destination": "https://gateway-service:10010/ui/v1/apicatalog",
+    "destination": "https://${ZOWE_REFERER_HOST}/ui/v1/apicatalog",
     "launchDefinition": {
       "pluginShortNameKey": "API Catalog",
       "pluginShortNameDefault": "API Catalog", 
