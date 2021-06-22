@@ -1,0 +1,5 @@
+{
+  "identifier": "org.zowe.terminal.vt",
+  "pluginLocation": "components/app-server/share/vt-ng2",
+  "relativeTo": "$ROOT_DIR"
+}

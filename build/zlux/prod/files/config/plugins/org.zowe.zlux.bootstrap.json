@@ -1,0 +1,5 @@
+{
+  "identifier": "org.zowe.zlux.bootstrap",
+  "pluginLocation": "components/app-server/share/zlux-app-manager/bootstrap",
+  "relativeTo": "$ROOT_DIR"
+}
