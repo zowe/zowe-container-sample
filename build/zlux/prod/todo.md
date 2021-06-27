@@ -1,0 +1,3 @@
+- config folder we can hardcode here, or copy from zowe-install-packaging during packaging
+- should we load instance.env?
+- /home/zowe/apps - {{app_dir}} - reference used in run-app-install script

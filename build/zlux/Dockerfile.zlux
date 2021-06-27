@@ -11,15 +11,16 @@
 #########################################################################################
 FROM node:12
 
-ENV ZWE_REFERRER_HOSTS='localhost'
-ENV ZWED_agent_http_ipAddresses=127.0.0.1
 ENV ZWED_agent_host=zss.mymainframe.com
-ENV ZWED_agent_http_port=8542
-ENV ZWED_dataserviceAuthentication_defaultAuthentication=zss
+ENV ZWED_agent_https_port=8542
 ENV ZOWE_ZLUX_TELNET_PORT=23
 ENV ZOWE_ZLUX_SECURITY_TYPE=telnet
+ENV ZWE_EXTERNAL_HOST='localhost'
+ENV ZWED_node_allowInvalidTLSProxy=true
+ENV ZWE_REFERRER_HOSTS='localhost,gateway-service,zlux-app-server'
 
-ADD files/zlux-core-1.17.0.tar /app/zlux-core
+
+ADD files/zlux-core-1.21.0.tar /app/zlux-core
 COPY pre-start.sh /app/zlux-core/zlux-app-server/bin/pre-start.sh
 WORKDIR /app/zlux-core/zlux-app-server/bin
 

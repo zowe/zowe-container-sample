@@ -1,0 +1,22 @@
+#
+services:
+  - serviceId: zss
+    title: Zowe System Services (ZSS)
+    description: 'Zowe System Services is an HTTPS and Websocket server that makes it easy to have secure, powerful web APIs backed by low-level z/OS constructs. It contains services for essential z/OS abilities such as working with files, datasets, and ESMs, but is also extensible by REST and Websocket "Dataservices" which are optionally present in App Framework "Plugins".'
+    catalogUiTileId: zss
+    instanceBaseUrls:
+      - https://TVT5003.svl.ibm.com:48542/
+    homePageRelativeUrl:
+    routedServices:
+      - gatewayUrl: api/v1
+        serviceRelativeUrl: 
+    apiInfo:
+      - apiId: org.zowe.zss
+        gatewayUrl: api/v1
+        version: 1.20.0
+        swaggerUrl: https://zlux-app-server:8544/api-docs/agent
+        # documentationUrl: TODO
+catalogUiTiles:
+  zss:
+    title: Zowe System Services (ZSS)
+    description:  Zowe System Services is an HTTPS and Websocket server that makes it easy to have secure, powerful web APIs backed by low-level z/OS constructs.

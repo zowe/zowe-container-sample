@@ -1,0 +1,11 @@
+services:
+- serviceId: explorer-uss
+  title: USS Explorer
+  description: IBM z/OS Unix Files UI service
+  catalogUiTileId:
+  instanceBaseUrls:
+  - https://explorer-uss:18550/
+  homePageRelativeUrl:
+  routedServices:
+  - gatewayUrl: ui/v1
+    serviceRelativeUrl: /ui/v1/explorer-uss

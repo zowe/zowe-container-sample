@@ -12,6 +12,11 @@
 #                                                                                       #
 #########################################################################################
 
+if [ "$1" == "org.zowe.api.catalog.json" ]; then
+  echo "install app ===== $1"
+  mv /app/api-catalog /dropins/api-catalog
+fi
+
 echo "Copying keystore from mounted location."
 mkdir -p /app/tls/keystore
 cp /app/tls/mounted-keystore/keystore.p12 /app/tls/keystore/keystore.p12

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\sdk\kube\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-catalog-service
+  name: api-catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: api-catalog-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\sdk\kube\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api-catalog-service
+    spec:
+      containers:
+      - args:
+        - --spring.config.additional-location=file:/app/api-catalog-service.yml
+        image: api-catalog-service
+        imagePullPolicy: "IfNotPresent"
+        name: api-catalog-service
+        ports:
+        - containerPort: 10014
+        volumeMounts:
+        - name: mounted-keystore
+          mountPath: /app/tls/mounted-keystore/keystore.p12
+        - name: mounted-truststore
+          mountPath: /app/tls/mounted-truststore/truststore.p12
+        - name: mounted-certificate
+          mountPath: /app/tls/mounted-keystore/ca.crt
+        - name: api-catalog-spring-config
+          mountPath: /app/api-catalog-service.yml
+        - name: dropins-volume
+          mountPath: /dropins
+        resources: {}
+      hostname: api-catalog-service
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: mounted-keystore
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/api-catalog-service/keystore.p12"
+          type: File
+      - name: mounted-truststore
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/truststore.p12"
+          type: File
+      - name: mounted-certificate
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/ca/ca.crt"
+          type: File
+      - name: api-catalog-spring-config
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/docker/apiml/api-catalog-service.yml"
+          type: File
+      - name: dropins-volume
+        persistentVolumeClaim:
+          claimName: dropins-volume
+status: {}

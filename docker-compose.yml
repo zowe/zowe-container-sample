@@ -17,6 +17,7 @@ services:
         build:
             dockerfile: Dockerfile.discovery
             context: ./build/apiml/
+        image: discovery-service
         command:
             [
                 "--spring.config.additional-location=file:/app/discovery-service.yml",
@@ -36,6 +37,7 @@ services:
         build:
             dockerfile: Dockerfile.gateway
             context: ./build/apiml/
+        image: gateway-service
         command:
             [
                 "--spring.config.additional-location=file:/app/gateway-service.yml",
@@ -53,6 +55,7 @@ services:
         build:
             dockerfile: Dockerfile.catalog
             context: ./build/apiml/
+        image: api-catalog-service
         command:
             [
                 "--spring.config.additional-location=file:/app/api-catalog-service.yml",
@@ -64,19 +67,64 @@ services:
             - ./certificates/api-catalog-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
             - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
             - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+            - dropins-volume:/dropins
+    datasets-api-service:
+        restart: always
+        hostname: datasets-api-service
+        build:
+            dockerfile: Dockerfile.datasets
+            context: ./build/explorers/
+        image: datasets-api-service
+        command:
+            [
+                "--spring.config.additional-location=file:/app/datasets-api-service.yml",
+            ]
+        ports:
+            - "18547:18547"
+        volumes:
+            - ./docker/explorers/datasets-api-service.yml:/app/datasets-api-service.yml
+            - ./certificates/datasets-api-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
+    jobs-api-service:
+        restart: always
+        hostname: jobs-api-service
+        build:
+            dockerfile: Dockerfile.jobs
+            context: ./build/explorers/
+        image: jobs-api-service
+        command:
+            [
+                "--spring.config.additional-location=file:/app/jobs-api-service.yml",
+            ]
+        ports:
+            - "18545:18545"
+        volumes:
+            - ./docker/explorers/jobs-api-service.yml:/app/jobs-api-service.yml
+            - ./certificates/jobs-api-service/keystore.p12:/app/tls/mounted-keystore/keystore.p12
+            - ./certificates/truststore.p12:/app/tls/mounted-truststore/truststore.p12
+            - ./certificates/ca/ca.crt:/app/tls/mounted-keystore/ca.crt
     zlux-app-server:
         environment:
-            ZWED_agent_host: zss.mymainframe.com
-            ZWED_agent_http_ipAddresses: "1.2.3.4"
-            ZWED_agent_http_port: 8542
+            ZWED_agent_host: tvt5003.svl.ibm.com
+            ZWED_agent_https_ipAddresses: "1.2.3.4"
+            ZWED_agent_https_port: 48542
             ZWED_node_https_keys: "/tls/tls.key,"
             ZWED_node_https_certificates: "/tls/tls.crt,"
             ZWED_node_https_certificateAuthorities: "/tls/ca.crt,"
-        restart: "no" #always
+            ZWED_dataserviceAuthentication_defaultAuthentication: "zss"
+            ZWED_node_mediationLayer_enabled: "true"
+            ZWED_node_mediationLayer_server_gatewayPort: 10010
+            ZWED_node_mediationLayer_server_gatewayHost: "gateway-service"
+            ZWED_node_mediationLayer_server_port: 10011
+            ZWED_node_mediationLayer_server_hostname: "discovery-service"
+            ZLUX_NO_CLUSTER: 1
+        restart: always
         hostname: zlux-app-server
         build:
             dockerfile: Dockerfile.zlux
             context: ./build/zlux
+        image: zlux-app-server
         ports:
             - "8544:8544"
         volumes:
@@ -91,6 +139,7 @@ services:
         build:
             dockerfile: Dockerfile.zssauth
             context: ./build/zlux
+        image: zss-auth-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-editor-plugin:
@@ -99,6 +148,7 @@ services:
         build:
             dockerfile: Dockerfile.editor
             context: ./build/zlux
+        image: zlux-editor-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-tn3270-plugin:
@@ -107,6 +157,7 @@ services:
         build:
             dockerfile: Dockerfile.tn3270
             context: ./build/zlux
+        image: zlux-tn3270-plugin
         volumes:
             - dropins-volume:/dropins
     zlux-vt-plugin:
@@ -115,7 +166,62 @@ services:
         build:
             dockerfile: Dockerfile.vt
             context: ./build/zlux
+        image: zlux-vt-plugin
         volumes:
+            - dropins-volume:/dropins
+    explorer-jes:
+        environment:
+            EXPLORER_UI_PORT: 18546
+            KEYSTORE_KEY: "/app/tls/tls.key"
+            KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
+            ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
+        restart: always
+        hostname: explorer-jes
+        build:
+            dockerfile: Dockerfile.explorer-jes
+            context: ./build/explorers/
+        image: explorer-jes
+        ports:
+            - "18546:18546"
+        volumes:
+            - ./certificates/explorer-ui-server/tls.key:/app/tls/tls.key
+            - ./certificates/explorer-ui-server/tls.crt:/app/tls/tls.crt
+            - dropins-volume:/dropins
+    explorer-mvs:
+        environment:
+            EXPLORER_UI_PORT: 18548
+            KEYSTORE_KEY: "/app/tls/tls.key"
+            KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
+            ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
+        restart: always
+        hostname: explorer-mvs
+        build:
+            dockerfile: Dockerfile.explorer-mvs
+            context: ./build/explorers/
+        image: explorer-mvs
+        ports:
+            - "18548:18548"
+        volumes:
+            - ./certificates/explorer-ui-server/tls.key:/app/tls/tls.key
+            - ./certificates/explorer-ui-server/tls.crt:/app/tls/tls.crt
+            - dropins-volume:/dropins
+    explorer-uss:
+        environment:
+            EXPLORER_UI_PORT: 18550
+            KEYSTORE_KEY: "/app/tls/tls.key"
+            KEYSTORE_CERTIFICATE: "/app/tls/tls.crt"
+            ZOWE_EXPLORER_FRAME_ANCESTORS: "localhost:*,127.0.0.1:*,zlux-app-server:*,gateway-service:*"
+        restart: always
+        hostname: explorer-uss
+        build:
+            dockerfile: Dockerfile.explorer-uss
+            context: ./build/explorers/
+        image: explorer-uss
+        ports:
+            - "18550:18550"
+        volumes:
+            - ./certificates/explorer-ui-server/tls.key:/app/tls/tls.key
+            - ./certificates/explorer-ui-server/tls.crt:/app/tls/tls.crt
             - dropins-volume:/dropins
 volumes:
     dropins-volume:

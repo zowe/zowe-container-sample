@@ -12,11 +12,19 @@
 #                                                                                       #
 #########################################################################################
 
-echo "Waiting for 10 seconds before installing plugins in /dropins"
+echo "Waiting for 60 seconds before installing plugins in /dropins"
 echo "This will allow for all plugins to be extracted."
-sleep 10
-
+sleep 30
+echo '==========ZLUX========' && ls
 echo "Installing all plugins in /dropins"
+for plugin in /dropins/*; do
+  if [ -d "$plugin" ] ;
+  then
+    echo "Installing $plugin"
+    ./install-app.sh $plugin
+  fi
+done
+
 for plugin in /dropins/*; do
   if [ -d "$plugin" ] ;
   then

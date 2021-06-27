@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zlux-tn3270-plugin
+  name: zlux-tn3270-plugin
+spec:
+  containers:
+  - image: zlux-tn3270-plugin
+    imagePullPolicy: "IfNotPresent"
+    name: zlux-tn3270-plugin
+    resources: {}
+    volumeMounts:
+    - mountPath: /dropins
+      name: dropins-volume
+  hostname: zlux-tn3270-plugin
+  restartPolicy: Never
+  volumes:
+  - name: dropins-volume
+    persistentVolumeClaim:
+      claimName: dropins-volume
+status: {}

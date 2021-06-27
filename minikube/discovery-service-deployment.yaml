@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\sdk\kube\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: discovery-service
+  name: discovery-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: discovery-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\sdk\kube\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: discovery-service
+    spec:
+      containers:
+      - args:
+        - --spring.config.additional-location=file:/app/discovery-service.yml
+        - --spring.profiles.active=https
+        image: discovery-service
+        imagePullPolicy: "IfNotPresent"
+        name: discovery-service
+        ports:
+        - containerPort: 10011
+        resources: {}
+        volumeMounts:
+        - name: mounted-keystore
+          mountPath: /app/tls/mounted-keystore/keystore.p12
+        - name: mounted-truststore
+          mountPath: /app/tls/mounted-truststore/truststore.p12
+        - name: mounted-certificate
+          mountPath: /app/tls/mounted-keystore/ca.crt
+        - name: api-defs
+          mountPath: /app/config/api-defs
+        - name: discovery-spring-config
+          mountPath: /app/discovery-service.yml
+      hostname: discovery-service
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: mounted-keystore
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/discovery-service/keystore.p12"
+          type: File
+      - name: mounted-truststore
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/truststore.p12"
+          type: File
+      - name: mounted-certificate
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/certificates/ca/ca.crt"
+          type: File
+      - name: api-defs
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/docker/apiml/api-defs"
+          type: Directory
+      - name: discovery-spring-config
+        hostPath: 
+          path: "/run/desktop/mnt/host/c/zowe/zowe-container-sample/docker/apiml/discovery-service.yml"
+          type: File
+status: {}
