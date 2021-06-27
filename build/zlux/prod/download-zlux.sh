@@ -1,26 +1,18 @@
 ZOWE_REPOSITORY=https://zowe.jfrog.io/artifactory
 
 output=$(node getPackagePaths.js)
-IFS=';'
-read -a PACKAGE_URLS <<< "$output"
+read -r PACKAGES URLS <<<$(echo $output | sed "s/;/ /g")
+PACKAGES=($(echo $PACKAGES | sed "s/,/ /g"))
+URLS=($(echo $URLS | sed "s/,/ /g"))
 
-output=${PACKAGE_URLS[0]}
-IFS=','
-read -a PACKAGES <<< "$output"
-# echo ${PACKAGES[*]}
-
-output=${PACKAGE_URLS[1]}
-IFS=','
-read -a URLS <<< "$output"
-# echo ${URLS[*]}
-
-i=0;
-for url in "${URLS[@]}";
+for i in "${!URLS[@]}";
 do
-  echo $i
-  echo zlux/"${PACKAGES["$i"]}".tar
-  curl $url -o files/zlux/"${PACKAGES["$i"]}".tar;
-  i=$((i+1))
+  # echo package zlux/"${PACKAGES[i]}".tar
+  echo url "${URLS[i]}"
+  curl -s "${URLS[i]}" -o files/zlux/"${PACKAGES[i]}".tar && echo "${PACKAGES[i]} done" &
 done
+wait
+
+mv files/zlux/zlux-core.tar files/zlux-core.tar
 
 

@@ -1,5 +1,0 @@
-{
-  "identifier": "org.zowe.terminal.proxy",
-  "pluginLocation": "components/app-server/share/zlux-server-framework/plugins/terminal-proxy",
-  "relativeTo": "$ROOT_DIR"
-}
